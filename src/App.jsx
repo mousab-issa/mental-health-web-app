@@ -8,6 +8,7 @@ import React, { lazy, Suspense } from "react";
 import Loading from "./components/Loading";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Track from "./pages/Track";
 
 const Home = lazy(() => import("./pages/Home"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -75,6 +76,14 @@ function App() {
               <Admin>
                 <Dashboard type={"users"} />
               </Admin>
+            }
+          />
+          <Route
+            path="/tracks/:trackId"
+            element={
+              <Protected>
+                <Track />
+              </Protected>
             }
           />
           <Route
