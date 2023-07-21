@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-
 import { socket } from "../utils/socket";
-
 import fetchData, { deleteData, postData } from "../helper/apiCall";
 import jwtDecode from "jwt-decode";
 
@@ -83,39 +81,42 @@ const Chat = ({ chatId }) => {
     }
   };
 
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return `${date.toLocaleTimeString()}`;
+  };
+
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-200">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6">
-        <div className="overflow-y-auto h-64 mb-4">
+    <div className="h-fill bg-gray-100">
+      <div className="p-6">
+        <div className="overflow-y-auto h-[75vh] mb-6 space-y-4">
           {messages?.map((message, index) => (
             <div key={index} className="flex flex-col my-2">
               <div
-                className={`rounded-xl px-4 py-2 mb-1 ${
+                className={`flex flex-col justify-between rounded-xl px-4 py-2 mb-1 ${
                   message.sender_id === user.userId
                     ? "bg-blue-500 text-white self-end"
                     : "bg-gray-300 self-start"
                 }`}
               >
-                {message.message}
+                <span>{message.message}</span>
+                <span className="text-xs text-gray-500 self-start">
+                  {formatDate(message.createdAt)}
+                </span>
               </div>
-              <button
-                onClick={() => deleteMessage(message._id)}
-                className="text-xs text-gray-500 self-end"
-              >
-                Delete
-              </button>
             </div>
           ))}
         </div>
+
         <form onSubmit={sendMessage} className="flex">
           <input
             value={messageInput}
             onChange={(event) => setMessageInput(event.target.value)}
             placeholder="Type a message..."
             type="text"
-            className="flex-grow rounded-l-xl p-2"
+            className="flex-grow rounded-l-xl p-2 border border-gray-300"
           />
-          <button className="bg-blue-500 text-white rounded-r-xl px-4 py-2">
+          <button className="bg-green-500 text-white rounded-r-xl px-4 py-2">
             Send
           </button>
         </form>
