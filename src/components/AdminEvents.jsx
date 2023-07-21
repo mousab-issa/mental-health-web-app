@@ -40,7 +40,7 @@ const AdminEvents = () => {
   const onSubmit = async (data) => {
     try {
       if (selectedImage) {
-        data.image = await CloudinaryUpload(selectedImage);
+        data.image = await CloudinaryUpload(selectedImage, "image");
       }
 
       if (data._id) {

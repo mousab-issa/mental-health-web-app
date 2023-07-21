@@ -3,6 +3,10 @@ import ReactPlayer from "react-player";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTrackById } from "../redux/reducers/tracks.slice";
 
+const getExtension = (url) => {
+  return url.split(/[#?]/)[0].split(".").pop().trim();
+};
+
 const TrackCard = ({ trackId }) => {
   const dispatch = useDispatch();
   const track = useSelector((state) =>
@@ -25,20 +29,22 @@ const TrackCard = ({ trackId }) => {
     return <div>Track not found!</div>;
   }
 
+  const isVideo = track.link.includes("video");
+
   return (
-    <div className="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4">
-      <div className="flex-shrink-0">
-        <img className="h-12 w-12" src={track.image} alt={track.title} />
-      </div>
+    <div className=" max-h-screen p-6 mx-auto bg-white rounded-xl shadow-md items-center space-x-4 md:max-w-2xl">
       <div>
-        <div className="text-xl font-medium text-black">{track.title}</div>
-        <p className="text-gray-500">{track.description}</p>
-        <ReactPlayer
-          url={track.link}
-          controls={true}
-          width="100%"
-          height="100%"
-        />
+        <h2 className="text-xl font-medium text-black mb-4">{track.title}</h2>
+        {isVideo ? (
+          <ReactPlayer url={track.link} controls={true} />
+        ) : (
+          <img
+            className="w-full object-cover"
+            src={track.link}
+            alt={track.title}
+          />
+        )}
+        <p className="text-gray-500 mt-4">{track.description}</p>
       </div>
     </div>
   );

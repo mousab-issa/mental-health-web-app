@@ -41,11 +41,11 @@ const AdminTracks = () => {
   const onSubmit = async (data) => {
     try {
       if (selectedTrack) {
-        data.link = await CloudinaryUpload(selectedTrack);
+        data.link = await CloudinaryUpload(selectedTrack, "video");
       }
 
       if (selectedImage) {
-        data.image = await CloudinaryUpload(selectedImage);
+        data.image = await CloudinaryUpload(selectedImage, "image");
       }
 
       if (data._id) {
