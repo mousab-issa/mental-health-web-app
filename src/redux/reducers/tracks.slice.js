@@ -9,6 +9,14 @@ export const fetchTracks = createAsyncThunk(
   }
 );
 
+export const fetchTrackById = createAsyncThunk(
+  "track/fetchById",
+  async (trackId) => {
+    const response = await fetchData(`/tracks/${trackId}`);
+    return response;
+  }
+);
+
 export const createTrack = createAsyncThunk(
   "tracks/createTrack",
   async (track) => {
@@ -95,6 +103,26 @@ const tracksSlice = createSlice({
         state.loading = false;
       })
       .addCase(updateTrack.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchTrackById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTrackById.fulfilled, (state, action) => {
+        // Check if track already exists in the state
+        const index = state.data.findIndex(
+          (track) => track._id === action.payload._id
+        );
+        if (index !== -1) {
+          state.data[index] = action.payload;
+        } else {
+          state.data.push(action.payload);
+        }
+        state.loading = false;
+      })
+      .addCase(fetchTrackById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

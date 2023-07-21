@@ -1,11 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactPlayer from "react-player";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchTrackById } from "../redux/reducers/tracks.slice";
 
 const TrackCard = ({ trackId }) => {
+  const dispatch = useDispatch();
   const track = useSelector((state) =>
     state.track.data.find((track) => track._id === trackId)
   );
+
+  const loading = useSelector((state) => state.track.loading);
+
+  useEffect(() => {
+    if (!track) {
+      dispatch(fetchTrackById(trackId));
+    }
+  }, [trackId, dispatch, track]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!track) {
     return <div>Track not found!</div>;
@@ -19,7 +33,12 @@ const TrackCard = ({ trackId }) => {
       <div>
         <div className="text-xl font-medium text-black">{track.title}</div>
         <p className="text-gray-500">{track.description}</p>
-        <ReactPlayer url={track.link} controls={true} />
+        <ReactPlayer
+          url={track.link}
+          controls={true}
+          width="100%"
+          height="100%"
+        />
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import TrackCard from "../components/TrackCard";
 function Track() {
   const params = useParams();
 
-  return <TrackCard>{params.trackId}</TrackCard>;
+  return <TrackCard trackId={params.trackId} />;
 }
 
 export default Track;

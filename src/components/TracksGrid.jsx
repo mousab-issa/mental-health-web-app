@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTracks } from "../redux/reducers/tracks.slice";
+import { Link } from "react-router-dom";
 
 const TracksGrid = () => {
   const dispatch = useDispatch();
@@ -28,26 +29,24 @@ const TracksGrid = () => {
                 key={track._id}
                 className="card overflow-hidden shadow-lg rounded-lg h-90 w-60 md:w-80"
               >
-                <a href={track.link} className="w-full block h-full">
+                <Link
+                  to={`/tracks/${track._id}`}
+                  className="w-full block h-full"
+                >
                   <img
                     alt={track.title}
                     src={track.image}
                     className="max-h-40 w-full object-cover"
                   />
-                  <div className="bg-white  w-full p-4">
+                  <div className="bg-white w-full p-4">
                     <p className="text-gray-800 text-xl font-medium mb-2">
                       {track.title}
                     </p>
                     <p className="text-gray-600 font-light text-md">
                       {track.description}
                     </p>
-                    <div className="flex items-center mt-4">
-                      <a href={track.link} className="block relative">
-                        View file
-                      </a>
-                    </div>
                   </div>
-                </a>
+                </Link>
               </div>
             ))}
           </div>
