@@ -1,53 +1,70 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
+import {
+  createEvent,
+  deleteEvent,
+  updateEvent,
+  fetchEvents,
+} from "../redux/reducers/events.slice";
 import Modal from "react-modal";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchEvents } from "../redux/reducers/events.slice";
-import Loading from "./Loading";
 import CloudinaryUpload from "../utils/cloudinaryUpload";
-import { postData } from "../helper/apiCall";
 
 Modal.setAppElement("#root");
 
 const AdminEvents = () => {
+  const { register, handleSubmit, reset, watch } = useForm();
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const { data: events, error } = useSelector((state) => state.event);
   const dispatch = useDispatch();
 
-  const events = useSelector((state) => state.event.data);
-  const loading = useSelector((state) => state.event.loading);
-  const error = useSelector((state) => state.event.error);
-
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
   useEffect(() => {
-    dispatch(fetchEvents());
-  }, [dispatch]);
+    dispatch(fetchEvents(currentPage));
+  }, [dispatch, currentPage]);
 
-  const onFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+  const openModal = (event) => {
+    setIsOpen(true);
+
+    reset(event);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    reset();
   };
 
   const onSubmit = async (data) => {
     try {
-      if (!selectedFile) {
-        return;
+      if (selectedImage) {
+        data.image = await CloudinaryUpload(selectedImage);
       }
-      data.image = await CloudinaryUpload(selectedFile);
-      await postData("/events", data);
 
-      dispatch(fetchEvents());
+      if (data._id) {
+        dispatch(updateEvent({ id: data._id, event: data }));
+      } else {
+        dispatch(createEvent(data));
+      }
     } catch (error) {
     } finally {
-      setModalIsOpen(false);
-      setIsSubmitting(false);
+      closeModal();
+      dispatch(fetchEvents(currentPage));
     }
+  };
+
+  const deleteHandler = (id) => {
+    dispatch(deleteEvent(id));
+  };
+
+  const prevPage = () => {
+    setCurrentPage((oldPage) => Math.max(oldPage - 1, 1));
+  };
+
+  const nextPage = () => {
+    setCurrentPage((oldPage) => oldPage + 1);
   };
 
   const customStyles = {
@@ -63,66 +80,63 @@ const AdminEvents = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Events</h1>
-      <button
-        className="btn btn-primary mb-10"
-        onClick={() => setModalIsOpen(true)}
-      >
+      <button className="btn btn-primary mb-10" onClick={() => setIsOpen(true)}>
         Create Event
       </button>
 
       <Modal
         isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
+        onRequestClose={closeModal}
         style={customStyles}
         contentLabel="Example Modal"
       >
-        <h2 className="text-lg font-bold mb-4">Create New Event</h2>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <h2 className="mb-4 text-lg font-bold">Create New Event</h2>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <input
-            className="w-full p-2 mb-3 border border-gray-200 rounded"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             name="title"
             placeholder="Title"
             {...register("title", { required: true })}
           />
-          {errors.title && <p className="text-red-500">Title is required</p>}
 
           <input
-            className="w-full p-2 mb-3 border border-gray-200 rounded"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             name="date"
             type="date"
             {...register("date", { required: true })}
           />
-          {errors.date && <p className="text-red-500">Date is required</p>}
 
-          <input
-            className="w-full p-2 mb-3 border border-gray-200 rounded"
+          <textarea
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
             name="details"
             placeholder="Details"
             {...register("details", { required: true })}
           />
-          {errors.details && (
-            <p className="text-red-500">Details are required</p>
-          )}
+
+          <div>
+            {!selectedImage && watch("image") && (
+              <img
+                src={watch("image")}
+                alt="preview"
+                className="object-cover w-24 h-24"
+              />
+            )}
+            <input
+              className="w-full px-4 py-2 mt-4 border border-gray-300 rounded-md"
+              type="file"
+              onChange={(e) => setSelectedImage(e.target.files[0])}
+            />
+          </div>
 
           <input
-            className="w-full p-2 mb-3 border border-gray-200 rounded"
-            type="file"
-            onChange={onFileChange}
-          />
-
-          <input
-            className="w-full p-2 text-white bg-blue-600 hover:bg-blue-500 rounded cursor-pointer"
+            className="w-full p-2 mt-4 text-white bg-blue-600 rounded cursor-pointer hover:bg-blue-500"
             type="submit"
-            value={isSubmitting ? "Submitting..." : "Submit"}
-            disabled={isSubmitting}
+            value="Submit"
           />
         </form>
       </Modal>
 
-      {loading && <Loading />}
-
       {error && <p className="text-red-500">Error: {error}</p>}
-
       {events?.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white table-auto">
@@ -131,8 +145,9 @@ const AdminEvents = () => {
                 <th className="px-4 py-2">Image</th>
                 <th className="px-4 py-2">Title</th>
                 <th className="px-4 py-2">Description</th>
+                <th className="px-4 py-2">Actions</th>
               </tr>
-            </thead>
+            </thead>{" "}
             <tbody className="text-gray-600 text-sm font-light">
               {events?.map((event, index) => (
                 <tr
@@ -148,6 +163,20 @@ const AdminEvents = () => {
                   </td>
                   <td className="px-4 py-2">{event.title}</td>
                   <td className="px-4 py-2">{event.details}</td>
+                  <td className="px-4 py-2">
+                    <button
+                      className="py-2 px-4 bg-blue-600 text-white rounded mr-2 hover:bg-blue-500"
+                      onClick={() => openModal(event)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="py-2 px-4 bg-red-600 text-white rounded hover:bg-red-500"
+                      onClick={() => deleteHandler(event._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

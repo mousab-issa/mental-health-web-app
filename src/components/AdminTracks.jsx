@@ -13,7 +13,7 @@ import CloudinaryUpload from "../utils/cloudinaryUpload";
 Modal.setAppElement("#root");
 
 const AdminTracks = () => {
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, watch } = useForm();
 
   const [modalIsOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,22 +38,25 @@ const AdminTracks = () => {
     reset();
   };
 
-  console.log(tracks);
-
   const onSubmit = async (data) => {
     try {
-      if (!setSelectedTrack) {
-        return;
+      if (selectedTrack) {
+        data.link = await CloudinaryUpload(selectedTrack);
       }
 
-      data.link = await CloudinaryUpload(selectedTrack);
-      data.image = await CloudinaryUpload(selectedImage);
+      if (selectedImage) {
+        data.image = await CloudinaryUpload(selectedImage);
+      }
 
-      dispatch(createTrack(data));
+      if (data._id) {
+        dispatch(updateTrack({ id: data._id, track: data }));
+      } else {
+        dispatch(createTrack(data));
+      }
     } catch (error) {
     } finally {
       closeModal();
-      dispatch(fetchTracks(1));
+      dispatch(fetchTracks(currentPage));
     }
   };
 
@@ -111,6 +114,20 @@ const AdminTracks = () => {
             >
               Image
             </label>
+            {selectedImage && (
+              <img
+                src={URL.createObjectURL(selectedImage)}
+                alt="preview"
+                style={{ width: "100px", height: "100px" }}
+              />
+            )}
+            {!selectedImage && watch("image") && (
+              <img
+                src={watch("image")}
+                alt="preview"
+                style={{ width: "100px", height: "100px" }}
+              />
+            )}
             <input
               className="w-full p-2 mb-3 border border-gray-200 rounded"
               type="file"
@@ -187,6 +204,7 @@ const AdminTracks = () => {
             <th>Description</th>
             <th>Image</th>
             <th>Link</th>
+            <th>Type</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -207,6 +225,7 @@ const AdminTracks = () => {
                   View file
                 </a>
               </td>
+              <td>{track.type}</td>
               <td>
                 <button
                   onClick={() => openModal(track)}
