@@ -1,25 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="title" content="HealthBooker" />
-    <meta name="description" content="Mental health application appointment" />
-    <meta name="language" content="en" />
+    <title>Peers Mental health booker</title>
     <meta
-      name="keywords"
-      content="available doctors, update profile, contact section, queries, notifications, admin management system, appointments, doctor application, becoming a doctor, book appointment,  remove user, remove doctor, mark appointment completed, application notification, appointment notification"
+      name="description"
+      content="Lightweight solution for deploying single page apps with GitHub Pages."
     />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <title>Peers Mental Health Booker</title>
-  </head>
 
+    <style>
+      html {
+        background-color: rgb(0, 120, 0);
+      }
+    </style>
+
+    <!-- favicon -->
+    <link rel="icon" type=”image/svg+xml”
+    href="/favicon/green-grid-144-168-192.svg">
+    <link
+      rel="alternate icon"
+      type="image/png"
+      href="/favicon/green-grid-144-168-192-512x512.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="/favicon/green-grid-144-168-192-180x180.png"
+    />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+    <meta name="theme-color" content="#000000" />
+
+    <!-- Start Peers Mental health booker -->
+    <script type="text/javascript">
+      (function (l) {
+        if (l.search[1] === "/") {
+          var decoded = l.search
+            .slice(1)
+            .split("&")
+            .map(function (s) {
+              return s.replace(/~and~/g, "&");
+            })
+            .join("?");
+          window.history.replaceState(
+            null,
+            null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      })(window.location);
+    </script>
+    <!-- End Single Page Apps for GitHub Pages -->
+  </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <!-- single page app in bundle.js -->
+    <script src="/build/bundle.js"></script>
   </body>
 </html>
