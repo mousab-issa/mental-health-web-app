@@ -76,7 +76,11 @@ const Navbar = () => {
               </li>
             ) : (
               <li key={index}>
-                <NavLink className={item.isButton ? "btn" : ""} to={item.path}>
+                <NavLink
+                  className={item.isButton ? "btn" : ""}
+                  to={item.path}
+                  onClick={() => setIconActive(false)}
+                >
                   {item.label}
                 </NavLink>
               </li>
