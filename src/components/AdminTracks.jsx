@@ -191,12 +191,6 @@ const AdminTracks = () => {
         </form>
       </Modal>
 
-      {loading && <div>Loading...</div>}
-      {error && <div>Error: {error}</div>}
-
-      {loading && <div>Loading...</div>}
-      {error && <div>Error: {error}</div>}
-
       <table className="w-full table-auto">
         <thead>
           <tr>

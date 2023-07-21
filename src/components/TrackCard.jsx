@@ -32,20 +32,25 @@ const TrackCard = ({ trackId }) => {
   const isVideo = track.link.includes("video");
 
   return (
-    <div className=" max-h-screen p-6 mx-auto bg-white rounded-xl shadow-md items-center space-x-4 md:max-w-2xl">
-      <div>
-        <h2 className="text-xl font-medium text-black mb-4">{track.title}</h2>
-        {isVideo ? (
-          <ReactPlayer url={track.link} controls={true} />
-        ) : (
-          <img
-            className="w-full object-cover"
-            src={track.link}
-            alt={track.title}
+    <div className="max-h-screen p-6 mx-auto bg-white rounded-xl shadow-md flex flex-col items-center space-x-4 md:max-w-2xl">
+      <h2 className="text-xl font-medium text-black mb-4">{track.title}</h2>
+      {isVideo ? (
+        <div className="w-full aspect-w-16 aspect-h-9 flex-1">
+          <ReactPlayer
+            className="object-contain"
+            url={track.link}
+            controls={true}
+            width="100%"
           />
-        )}
-        <p className="text-gray-500 mt-4">{track.description}</p>
-      </div>
+        </div>
+      ) : (
+        <img
+          className="w-full object-cover"
+          src={track.link}
+          alt={track.title}
+        />
+      )}
+      <p className="text-gray-500 mt-4">{track.description}</p>
     </div>
   );
 };

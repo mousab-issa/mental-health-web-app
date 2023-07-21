@@ -71,6 +71,7 @@ const tracksSlice = createSlice({
         state.data.push(action.payload);
         state.loading = false;
       })
+
       .addCase(createTrack.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
@@ -81,7 +82,7 @@ const tracksSlice = createSlice({
       })
       .addCase(deleteTrack.fulfilled, (state, action) => {
         state.data = state.data.filter(
-          (track) => track.id !== action.payload.id
+          (track) => track._id !== action.payload._id
         );
         state.loading = false;
       })
