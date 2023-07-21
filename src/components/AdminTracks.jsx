@@ -56,7 +56,6 @@ const AdminTracks = () => {
     } catch (error) {
     } finally {
       closeModal();
-      dispatch(fetchTracks(currentPage));
     }
   };
 
