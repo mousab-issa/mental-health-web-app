@@ -107,7 +107,7 @@ const Appointments = () => {
                   disabled={isDisabled}
                   onClick={() => accept(row.original)}
                 >
-                  Accept {row.original?.status}
+                  Accept
                 </button>
               </Fragment>
             );

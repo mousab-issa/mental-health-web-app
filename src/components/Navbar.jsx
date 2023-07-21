@@ -7,6 +7,8 @@ import { setUserInfo } from "../redux/reducers/rootSlice";
 import { FiMenu } from "react-icons/fi";
 import { RxCross1 } from "react-icons/rx";
 import jwt_decode from "jwt-decode";
+import { useMemo } from "react";
+import { useCallback } from "react";
 
 const Navbar = () => {
   const [iconActive, setIconActive] = useState(false);
@@ -19,37 +21,40 @@ const Navbar = () => {
       : ""
   );
 
-  const logoutFunc = () => {
+  const logoutFunc = useCallback(() => {
     dispatch(setUserInfo({}));
     localStorage.removeItem("token");
     navigate("/login");
-  };
+  }, [dispatch, navigate]);
 
-  const navItems = [
-    { path: "/", label: "Home" },
-    ...(token && user.isAdmin
-      ? [{ path: "/dashboard/users", label: "Dashboard" }]
-      : token && user.isDoctor
-      ? [
-          { path: "/appointments", label: "Appointments" },
-          { path: "/notifications", label: "Notifications" },
-          { path: "/profile", label: "Profile" },
-        ]
-      : [
-          { path: "/doctors", label: "Mental health Professional" },
-          { path: "/appointments", label: "Appointments" },
-          { path: "/notifications", label: "Notifications" },
-          { path: "/applyfordoctor", label: "Apply to Peer" },
-          { path: "/#contact", label: "Contact Us", isHashLink: true },
-          { path: "/profile", label: "Profile" },
-        ]),
-    ...(!token
-      ? [
-          { path: "/login", label: "Login", isButton: true },
-          { path: "/register", label: "Register", isButton: true },
-        ]
-      : [{ action: logoutFunc, label: "Logout", isAction: true }]),
-  ];
+  const navItems = useMemo(
+    () => [
+      { path: "/", label: "Home" },
+      ...(token && user.isAdmin
+        ? [{ path: "/dashboard/users", label: "Dashboard" }]
+        : token && user.isDoctor
+        ? [
+            { path: "/appointments", label: "Appointments" },
+            { path: "/notifications", label: "Notifications" },
+            { path: "/profile", label: "Profile" },
+          ]
+        : [
+            { path: "/doctors", label: "Mental health Professional" },
+            { path: "/appointments", label: "Appointments" },
+            { path: "/notifications", label: "Notifications" },
+            { path: "/applyfordoctor", label: "Apply to Peer" },
+            { path: "/#contact", label: "Contact Us", isHashLink: true },
+            { path: "/profile", label: "Profile" },
+          ]),
+      ...(!token
+        ? [
+            { path: "/login", label: "Login", isButton: true },
+            { path: "/register", label: "Register", isButton: true },
+          ]
+        : [{ action: logoutFunc, label: "Logout", isAction: true }]),
+    ],
+    [token, user.isAdmin, user.isDoctor, logoutFunc]
+  );
 
   return (
     <header>
