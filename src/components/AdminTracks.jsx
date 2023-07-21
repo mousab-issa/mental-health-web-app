@@ -38,6 +38,8 @@ const AdminTracks = () => {
     reset();
   };
 
+  console.log(tracks);
+
   const onSubmit = async (data) => {
     try {
       if (!setSelectedTrack) {
@@ -92,17 +94,23 @@ const AdminTracks = () => {
         contentLabel="Track Modal"
         style={customStyles}
       >
-        <h2 className="text-lg font-bold mb-4">Create New Track </h2>
-        <form className="flex-col" onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex-col">
+        <h2 className="text-2xl font-bold my-4">Create New Track</h2>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <div>
             <input
               {...register("title", { required: true })}
               placeholder="Title"
+              className="w-full p-2 border border-gray-200 rounded"
             />
           </div>
 
           <div>
-            <label htmlFor="">Image</label>
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="image"
+            >
+              Image
+            </label>
             <input
               className="w-full p-2 mb-3 border border-gray-200 rounded"
               type="file"
@@ -113,7 +121,12 @@ const AdminTracks = () => {
           </div>
 
           <div>
-            <label htmlFor="">Link</label>
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="link"
+            >
+              Link
+            </label>
             <input
               className="w-full p-2 mb-3 border border-gray-200 rounded"
               type="file"
@@ -124,8 +137,17 @@ const AdminTracks = () => {
           </div>
 
           <div>
-            <label htmlFor="type">Type of Track</label>
-            <select {...register("type", { required: true })} id="type">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="type"
+            >
+              Type of Track
+            </label>
+            <select
+              {...register("type", { required: true })}
+              id="type"
+              className="w-full p-2 border border-gray-200 rounded"
+            >
               <option value="">Select a type</option>
               {trackTypes.map((type) => (
                 <option key={type} value={type}>
@@ -135,45 +157,89 @@ const AdminTracks = () => {
             </select>
           </div>
 
-          <textarea
-            {...register("description", { required: true })}
-            placeholder="Description"
-          />
+          <div>
+            <textarea
+              {...register("description", { required: true })}
+              placeholder="Description"
+              className="w-full p-2 border border-gray-200 rounded"
+            />
+          </div>
 
-          <button type="submit">Create</button>
+          <button
+            type="submit"
+            className="py-2 px-4 bg-green-500 text-white rounded shadow"
+          >
+            Create
+          </button>
         </form>
       </Modal>
 
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error}</div>}
 
-      <table>
+      {loading && <div>Loading...</div>}
+      {error && <div>Error: {error}</div>}
+
+      <table className="w-full table-auto">
         <thead>
           <tr>
             <th>Title</th>
             <th>Description</th>
+            <th>Image</th>
+            <th>Link</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {tracks?.map((track) => (
-            <tr key={track.id}>
+            <tr key={track._id}>
               <td>{track.title}</td>
               <td>{track.description}</td>
               <td>
-                <button onClick={() => openModal(track)}>Edit</button>
-                <button onClick={() => deleteHandler(track.id)}>Delete</button>
+                <img
+                  src={track.image}
+                  alt={track.title}
+                  style={{ width: "50px", height: "50px" }}
+                />
+              </td>
+              <td>
+                <a href={track.link} target="_blank" rel="noreferrer">
+                  View file
+                </a>
+              </td>
+              <td>
+                <button
+                  onClick={() => openModal(track)}
+                  className="py-1 px-4 bg-blue-500 text-white rounded mr-2"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteHandler(track._id)}
+                  className="py-1 px-4 bg-red-500 text-white rounded"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div>
-        <button onClick={prevPage} disabled={currentPage === 1}>
+      <div className="mt-4 flex justify-between">
+        <button
+          onClick={prevPage}
+          disabled={currentPage === 1}
+          className="py-1 px-4 bg-gray-500 text-white rounded"
+        >
           Previous Page
         </button>
-        <button onClick={nextPage}>Next Page</button>
+        <button
+          onClick={nextPage}
+          className="py-1 px-4 bg-gray-500 text-white rounded"
+        >
+          Next Page
+        </button>
       </div>
     </div>
   );
