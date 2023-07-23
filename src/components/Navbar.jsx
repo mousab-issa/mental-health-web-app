@@ -39,7 +39,7 @@ const Navbar = () => {
             { path: "/profile", label: "Profile" },
           ]
         : [
-            { path: "/doctors", label: "Mental health Professional" },
+            { path: "/doctors", label: "Book an appointment" },
             { path: "/appointments", label: "Appointments" },
             { path: "/notifications", label: "Notifications" },
             { path: "/applyfordoctor", label: "Apply to Peer" },

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import jwt_decode from "jwt-decode";
 import fetchData, { putData } from "../../helper/apiCall";
+import { toast } from "react-hot-toast";
 
 const initialState = {
   appointments: [],
@@ -23,42 +24,64 @@ export const fetchAppointments = createAsyncThunk(
 
 export const completeAppointment = createAsyncThunk(
   "appointments/completeAppointment",
-  async (appointment) => {
-    console.log(appointment);
-    const response = await putData(
-      "/appointment/completed",
-      {
-        appointid: appointment._id,
-        doctorId: appointment.doctorId._id,
-        doctorname: `${appointment.userId.firstname} ${appointment.userId.lastname}`,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-    return response;
+  async (appointment, thunk) => {
+    try {
+      await toast.promise(
+        putData(
+          "/appointment/completed",
+          {
+            appointid: appointment._id,
+            doctorId: appointment.doctorId._id,
+            doctorname: `${appointment.userId.firstname} ${appointment.userId.lastname}`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        ),
+        {
+          success: "Appointment Completed successfully",
+          error: "Unable to Complete",
+          loading: "Completing appointment...",
+        }
+      );
+      return { ...appointment, status: "Completed" };
+    } catch (error) {
+      thunk.rejectWithValue(error);
+    }
   }
 );
 
 export const acceptAppointment = createAsyncThunk(
   "appointments/acceptAppointment",
-  async (appointment) => {
-    const response = await putData(
-      "/appointment/accept",
-      {
-        appointid: appointment._id,
-        doctorId: appointment.doctorId._id,
-        doctorname: `${appointment.userId.firstname} ${appointment.userId.lastname}`,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-    return response;
+  async (appointment, thunk) => {
+    try {
+      await toast.promise(
+        putData(
+          "/appointment/accept",
+          {
+            appointid: appointment._id,
+            doctorId: appointment.doctorId._id,
+            doctorname: `${appointment.userId.firstname} ${appointment.userId.lastname}`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        ),
+        {
+          success: "Appointment Accepted successfully",
+          error: "Unable to Accepted",
+          loading: "Accepting appointment...",
+        }
+      );
+
+      return { ...appointment, status: "Accepted" };
+    } catch (error) {
+      thunk.rejectWithValue(error);
+    }
   }
 );
 
@@ -81,7 +104,6 @@ const appointmentsSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(completeAppointment.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.appointments = state.appointments.map((appointment) =>
           appointment._id === action.payload._id ? action.payload : appointment
         );

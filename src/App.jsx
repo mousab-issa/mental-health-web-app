@@ -28,6 +28,7 @@ function App() {
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/login" element={<Login />} />
+
           <Route
             path="/register"
             element={
@@ -36,8 +37,11 @@ function App() {
               </Public>
             }
           />
+
           <Route path="/" element={<Home />} />
+
           <Route path="/doctors" element={<Doctors />} />
+
           <Route
             path="/appointments"
             element={
@@ -46,6 +50,7 @@ function App() {
               </Protected>
             }
           />
+
           <Route
             path="/notifications"
             element={
@@ -54,6 +59,7 @@ function App() {
               </Protected>
             }
           />
+
           <Route
             path="/applyfordoctor"
             element={
@@ -62,6 +68,7 @@ function App() {
               </Protected>
             }
           />
+
           <Route
             path="/profile"
             element={
@@ -70,6 +77,7 @@ function App() {
               </Protected>
             }
           />
+
           <Route
             path="/dashboard/users"
             element={
@@ -78,6 +86,7 @@ function App() {
               </Admin>
             }
           />
+
           <Route
             path="/tracks/:trackId"
             element={
@@ -86,6 +95,7 @@ function App() {
               </Protected>
             }
           />
+
           <Route
             path="/dashboard/doctors"
             element={
@@ -94,6 +104,7 @@ function App() {
               </Admin>
             }
           />
+
           <Route
             path="/dashboard/events"
             element={
@@ -102,6 +113,7 @@ function App() {
               </Admin>
             }
           />
+
           <Route
             path="/dashboard/appointments"
             element={
@@ -110,6 +122,7 @@ function App() {
               </Protected>
             }
           />
+
           <Route
             path="/dashboard/tracks"
             element={
@@ -118,6 +131,7 @@ function App() {
               </Protected>
             }
           />
+
           <Route
             path="/appointment/chat/:chatId"
             element={
@@ -126,6 +140,7 @@ function App() {
               </Protected>
             }
           />
+
           <Route
             path="/dashboard/applications"
             element={
@@ -134,6 +149,7 @@ function App() {
               </Protected>
             }
           />
+
           <Route path="*" element={<Error />} />
         </Routes>
       </Suspense>
