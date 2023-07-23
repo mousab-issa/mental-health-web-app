@@ -30,6 +30,7 @@ const Navbar = () => {
   const navItems = useMemo(
     () => [
       { path: "/", label: "Home" },
+
       ...(token && user.isAdmin
         ? [{ path: "/dashboard/users", label: "Dashboard" }]
         : token && user.isDoctor
@@ -38,7 +39,7 @@ const Navbar = () => {
             { path: "/notifications", label: "Notifications" },
             { path: "/profile", label: "Profile" },
           ]
-        : [
+        : token && [
             { path: "/doctors", label: "Book an appointment" },
             { path: "/appointments", label: "Appointments" },
             { path: "/notifications", label: "Notifications" },
