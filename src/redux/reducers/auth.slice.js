@@ -1,9 +1,8 @@
-// redux/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import toast from "react-hot-toast";
 import jwt_decode from "jwt-decode";
-import fetchData from "../helper/apiCall";
+import fetchData from "../../helper/apiCall";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_DOMAIN;
 
@@ -12,6 +11,9 @@ export const loginUser = createAsyncThunk(
   async (user, thunkAPI) => {
     try {
       const response = await axios.post("/user/login", user);
+
+      localStorage.setItem("token", response.data.token);
+
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -36,6 +38,7 @@ export const registerUser = createAsyncThunk(
   async (user, thunkAPI) => {
     try {
       const response = await axios.post("/user/register", user);
+
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -57,7 +60,7 @@ export const authSlice = createSlice({
     },
     [loginUser.fulfilled]: (state, { payload }) => {
       state.status = "succeeded";
-      localStorage.setItem("token", payload.token);
+
       state.user = jwt_decode(payload.token).userId;
     },
     [loginUser.rejected]: (state, { payload }) => {

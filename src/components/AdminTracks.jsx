@@ -20,7 +20,7 @@ const AdminTracks = () => {
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const { data: tracks, loading, error } = useSelector((state) => state.track);
+  const { data: tracks } = useSelector((state) => state.track);
   const dispatch = useDispatch();
 
   useEffect(() => {

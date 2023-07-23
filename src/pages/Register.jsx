@@ -1,147 +1,147 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate } from "react-router-dom";
-import "../styles/register.css";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import * as yup from "yup";
+import TextInput from "../components/TextInput";
+import { registerUser } from "../redux/reducers/auth.slice";
+import CloudinaryUpload from "../utils/cloudinaryUpload";
+import { toast } from "react-hot-toast";
 
-axios.defaults.baseURL = process.env.REACT_APP_SERVER_DOMAIN;
+const schema = yup.object().shape({
+  firstname: yup
+    .string()
+    .min(3, "First name must be at least 3 characters long")
+    .required("First name is required"),
+  lastname: yup
+    .string()
+    .min(3, "Last name must be at least 3 characters long")
+    .required("Last name is required"),
+  email: yup.string().email("Email is not valid").required("Email is required"),
+  password: yup
+    .string()
+    .min(5, "Password must be at least 5 characters long")
+    .required("Password is required"),
+  confpassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords do not match")
+    .required("Confirm password is required"),
+});
 
 function Register() {
-  const [file, setFile] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [formDetails, setFormDetails] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    password: "",
-    confpassword: "",
-  });
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {
+    handleSubmit,
+    control,
+    setError,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const inputChange = (e) => {
-    const { name, value } = e.target;
-    return setFormDetails({
-      ...formDetails,
-      [name]: value,
-    });
-  };
+  const { status } = useSelector((state) => state.auth);
 
-  const onUpload = async (element) => {
-    setLoading(true);
-    if (element.type === "image/jpeg" || element.type === "image/png") {
-      const data = new FormData();
-      data.append("file", element);
-      data.append("upload_preset", process.env.REACT_APP_CLOUDINARY_PRESET);
-      data.append("cloud_name", process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
-      fetch(process.env.REACT_APP_CLOUDINARY_BASE_URL, {
-        method: "POST",
-        body: data,
-      })
-        .then((res) => res.json())
-        .then((data) => setFile(data.url));
-      setLoading(false);
-    } else {
-      setLoading(false);
-      toast.error("Please select an image in jpeg or png format");
-    }
-  };
+  const onSubmit = async (data) => {
+    if (data.profile_pic) {
+      try {
+        const fileUrl = await CloudinaryUpload(data.profile_pic, "image");
 
-  const formSubmit = async (e) => {
-    try {
-      e.preventDefault();
-
-      if (loading) return;
-      if (file === "") return;
-
-      const { firstname, lastname, email, password, confpassword } =
-        formDetails;
-      if (!firstname || !lastname || !email || !password || !confpassword) {
-        return toast.error("Input field should not be empty");
-      } else if (firstname.length < 3) {
-        return toast.error("First name must be at least 3 characters long");
-      } else if (lastname.length < 3) {
-        return toast.error("Last name must be at least 3 characters long");
-      } else if (password.length < 5) {
-        return toast.error("Password must be at least 5 characters long");
-      } else if (password !== confpassword) {
-        return toast.error("Passwords do not match");
+        await toast.promise(
+          dispatch(registerUser({ ...data, pic: fileUrl })),
+          {
+            loading: "Registering...",
+            success: (res) => {
+              navigate("/login");
+              return "Login successfully";
+            },
+            error: "Unable to login user",
+          },
+          { style: { minWidth: "250px" } }
+        );
+      } catch (err) {
+        setError("profile_pic", {
+          type: "manual",
+          message: err.message,
+        });
       }
-
-      const { data } = await toast.promise(
-        axios.post("/user/register", {
-          firstname,
-          lastname,
-          email,
-          password,
-          pic: file,
-        }),
-        {
-          pending: "Registering user...",
-          success: "User registered successfully",
-          error: "Unable to register user",
-          loading: "Registering user...",
-        }
-      );
-      return navigate("/login");
-    } catch (error) {}
+    } else {
+      setError("profile_pic", {
+        type: "manual",
+        message: "Profile picture is required",
+      });
+    }
   };
 
   return (
     <section className="register-section flex-center">
       <div className="register-container flex-center">
         <h2 className="form-heading">Sign Up</h2>
-        <form onSubmit={formSubmit} className="register-form">
-          <input
-            type="text"
+        <form onSubmit={handleSubmit(onSubmit)} className="register-form">
+          <TextInput
+            control={control}
             name="firstname"
-            className="form-input"
             placeholder="Enter your first name"
-            value={formDetails.firstname}
-            onChange={inputChange}
+            rules={{ required: true }}
           />
-          <input
-            type="text"
+
+          <TextInput
+            control={control}
             name="lastname"
-            className="form-input"
             placeholder="Enter your last name"
-            value={formDetails.lastname}
-            onChange={inputChange}
+            rules={{ required: true }}
           />
-          <input
-            type="email"
+
+          <TextInput
+            control={control}
             name="email"
-            className="form-input"
             placeholder="Enter your email"
-            value={formDetails.email}
-            onChange={inputChange}
+            rules={{ required: true }}
           />
-          <input
-            type="file"
-            onChange={(e) => onUpload(e.target.files[0])}
-            name="profile-pic"
-            id="profile-pic"
-            className="form-input"
+
+          <Controller
+            name="profile_pic"
+            control={control}
+            defaultValue={[]}
+            render={(props) => {
+              return (
+                <input
+                  type="file"
+                  onChange={(event) => {
+                    return props.field.onChange(event.target.files[0]);
+                  }}
+                />
+              );
+            }}
           />
-          <input
-            type="password"
+
+          {errors?.profile_pic && (
+            <span className="text-red-400 text-xs">
+              {errors.profile_pic.message}
+            </span>
+          )}
+
+          <TextInput
+            control={control}
             name="password"
-            className="form-input"
             placeholder="Enter your password"
-            value={formDetails.password}
-            onChange={inputChange}
-          />
-          <input
+            rules={{ required: true }}
             type="password"
-            name="confpassword"
-            className="form-input"
-            placeholder="Confirm your password"
-            value={formDetails.confpassword}
-            onChange={inputChange}
           />
+
+          <TextInput
+            control={control}
+            name="confpassword"
+            placeholder="Confirm your password"
+            rules={{ required: true }}
+            type="password"
+          />
+
           <button
             type="submit"
             className="btn form-btn"
-            disabled={loading ? true : false}
+            disabled={status === "loading"}
           >
             sign up
           </button>

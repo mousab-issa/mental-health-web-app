@@ -14,6 +14,7 @@ function Profile() {
   const { userId } = jwt_decode(localStorage.getItem("token"));
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.root);
+
   const [file, setFile] = useState("");
   const [formDetails, setFormDetails] = useState({
     firstname: "",
@@ -122,15 +123,8 @@ function Profile() {
         <section className="register-section flex-center">
           <div className="profile-container flex-center">
             <h2 className="form-heading">Profile</h2>
-            <img
-              src={file}
-              alt="profile"
-              className="profile-pic"
-            />
-            <form
-              onSubmit={formSubmit}
-              className="register-form"
-            >
+            <img src={file} alt="profile" className="profile-pic" />
+            <form onSubmit={formSubmit} className="register-form">
               <div className="form-same-row">
                 <input
                   type="text"
@@ -215,10 +209,7 @@ function Profile() {
                   onChange={inputChange}
                 />
               </div>
-              <button
-                type="submit"
-                className="btn form-btn"
-              >
+              <button type="submit" className="btn form-btn">
                 update
               </button>
             </form>

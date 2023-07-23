@@ -3,6 +3,7 @@ import rootReducer from "./reducers/rootSlice";
 import appointmentsReducer from "./reducers/appointment.slice";
 import events from "./reducers/events.slice";
 import tracks from "./reducers/tracks.slice";
+import auth from "./reducers/auth.slice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     appointment: appointmentsReducer,
     event: events,
     track: tracks,
+    auth,
   },
 });
 
