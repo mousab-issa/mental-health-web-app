@@ -41,7 +41,9 @@ function App() {
   }, [dispatch]);
 
   return !user ? (
-    <span>loading..</span>
+    <div className="h-screen">
+      <Loading />
+    </div>
   ) : (
     <Router>
       <Navbar />
