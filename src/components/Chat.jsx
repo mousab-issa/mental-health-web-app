@@ -14,6 +14,8 @@ const Chat = ({ chatId }) => {
   const messageInputRef = useRef(null);
   const user = useSelector((state) => state.auth.user);
 
+  const observer = useRef();
+
   const loadMore = useCallback(async () => {
     if (!hasMore) return;
 
@@ -33,6 +35,19 @@ const Chat = ({ chatId }) => {
       console.error(error);
     }
   }, [chatId, page, hasMore]);
+
+  const lastMessageElementRef = useCallback(
+    (node) => {
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          loadMore();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [hasMore, loadMore]
+  );
 
   useEffect(() => {
     loadMore();
@@ -110,7 +125,11 @@ const Chat = ({ chatId }) => {
       <div className="p-6">
         <div className="overflow-y-auto h-[75vh] mb-6 space-y-4">
           {messages?.map((message, index) => (
-            <div key={index} className="flex flex-col my-2">
+            <div
+              key={index}
+              ref={index === messages.length - 1 ? lastMessageElementRef : null}
+              className="flex flex-col my-2"
+            >
               <div
                 className={`flex flex-col justify-between rounded-xl px-4 py-2 mb-1 shadow-md ${
                   message.sender_id === user._id

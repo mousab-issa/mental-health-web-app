@@ -12,6 +12,7 @@ import Track from "./pages/Track";
 import { useDispatch } from "react-redux";
 import { getUserInfo, logout } from "./redux/reducers/auth.slice";
 import jwt_decode from "jwt-decode";
+import { fetchEvents } from "./redux/reducers/events.slice";
 
 const Home = lazy(() => import("./pages/Home"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -32,6 +33,10 @@ function App() {
       const decodedToken = jwt_decode(token);
       dispatch(getUserInfo(decodedToken.userId));
     }
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchEvents());
   }, [dispatch]);
 
   return (

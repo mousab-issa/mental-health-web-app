@@ -9,12 +9,7 @@ import { fetchEvents } from "../redux/reducers/events.slice";
 import TracksGrid from "../components/TracksGrid";
 
 const Home = () => {
-  const dispatch = useDispatch();
   const events = useSelector((state) => state.event.data);
-
-  useEffect(() => {
-    dispatch(fetchEvents());
-  }, [dispatch]);
 
   const carouselImageStyle = {
     maxHeight: "50vh",
