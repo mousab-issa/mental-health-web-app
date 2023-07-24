@@ -1,61 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "../styles/navbar.css";
 import { HashLink } from "react-router-hash-link";
-import { useDispatch } from "react-redux";
-import { setUserInfo } from "../redux/reducers/rootSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { FiMenu } from "react-icons/fi";
 import { RxCross1 } from "react-icons/rx";
-import jwt_decode from "jwt-decode";
 import { useMemo } from "react";
 import { useCallback } from "react";
+import { logout } from "../redux/reducers/auth.slice";
 
 const Navbar = () => {
   const [iconActive, setIconActive] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [token] = useState(localStorage.getItem("token") || "");
-  const [user] = useState(
-    localStorage.getItem("token")
-      ? jwt_decode(localStorage.getItem("token"))
-      : ""
-  );
+
+  const user = useSelector((state) => state.auth.user);
 
   const logoutFunc = useCallback(() => {
-    dispatch(setUserInfo({}));
-    localStorage.removeItem("token");
+    dispatch(logout());
     navigate("/login");
   }, [dispatch, navigate]);
 
   const navItems = useMemo(
     () => [
       { path: "/", label: "Home" },
-
-      ...(token && user.isAdmin
+      ...(user?.isAdmin
         ? [{ path: "/dashboard/users", label: "Dashboard" }]
-        : token && user.isDoctor
+        : user?.isDoctor
         ? [
             { path: "/appointments", label: "Appointments" },
             { path: "/notifications", label: "Notifications" },
             { path: "/profile", label: "Profile" },
           ]
-        : token && [
+        : user
+        ? [
             { path: "/doctors", label: "Book an appointment" },
             { path: "/appointments", label: "Appointments" },
             { path: "/notifications", label: "Notifications" },
             { path: "/applyfordoctor", label: "Apply to Peer" },
             { path: "/#contact", label: "Contact Us", isHashLink: true },
             { path: "/profile", label: "Profile" },
-          ]),
-      ...(!token
+          ]
+        : []),
+      ...(!user
         ? [
             { path: "/login", label: "Login", isButton: true },
             { path: "/register", label: "Register", isButton: true },
           ]
         : [{ action: logoutFunc, label: "Logout", isAction: true }]),
     ],
-    [token, user.isAdmin, user.isDoctor, logoutFunc]
+    [user, logoutFunc]
   );
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <header>

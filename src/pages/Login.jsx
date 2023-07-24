@@ -16,18 +16,9 @@ function Login() {
 
   const onSubmit = async (data) => {
     try {
-      await toast.promise(
-        dispatch(loginUser(data)),
-        {
-          loading: "Logging in...",
-          success: (res) => {
-            navigate("/");
-            return "Login successfully";
-          },
-          error: "Unable to login user",
-        },
-        { style: { minWidth: "250px" } }
-      );
+      await dispatch(loginUser(data)).unwrap();
+      toast.success("User Logged successfully");
+      navigate("/");
     } catch (error) {
       console.error(error);
     }

@@ -44,22 +44,15 @@ function Register() {
   const { status } = useSelector((state) => state.auth);
 
   const onSubmit = async (data) => {
-    if (data.profile_pic) {
+    console.log(data.profile_pic);
+    if (!!data.profile_pic?.name) {
       try {
         const fileUrl = await CloudinaryUpload(data.profile_pic, "image");
+        await dispatch(registerUser({ ...data, pic: fileUrl })).unwrap();
 
-        await toast.promise(
-          dispatch(registerUser({ ...data, pic: fileUrl })),
-          {
-            loading: "Registering...",
-            success: (res) => {
-              navigate("/login");
-              return "Login successfully";
-            },
-            error: "Unable to login user",
-          },
-          { style: { minWidth: "250px" } }
-        );
+        navigate("/login");
+
+        await toast.success("User Registered successfully");
       } catch (err) {
         setError("profile_pic", {
           type: "manual",

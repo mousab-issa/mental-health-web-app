@@ -4,11 +4,14 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { Toaster } from "react-hot-toast";
 import { Protected, Public, Admin } from "./middleware/route";
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import Loading from "./components/Loading";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Track from "./pages/Track";
+import { useDispatch } from "react-redux";
+import { getUserInfo, logout } from "./redux/reducers/auth.slice";
+import jwt_decode from "jwt-decode";
 
 const Home = lazy(() => import("./pages/Home"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -21,6 +24,16 @@ const Error = lazy(() => import("./pages/Error"));
 const AppointmentChat = lazy(() => import("./pages/AppointmentChat"));
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedToken = jwt_decode(token);
+      dispatch(getUserInfo(decodedToken.userId));
+    }
+  }, [dispatch]);
+
   return (
     <Router>
       <Navbar />
