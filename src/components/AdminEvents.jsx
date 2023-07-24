@@ -87,8 +87,8 @@ const AdminEvents = () => {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        style={customStyles}
         contentLabel="Example Modal"
+        style={customStyles}
       >
         <h2 className="mb-4 text-lg font-bold">Create New Event</h2>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>

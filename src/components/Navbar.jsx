@@ -52,10 +52,6 @@ const Navbar = () => {
     [user, logoutFunc]
   );
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
   return (
     <header>
       <nav className={iconActive ? "nav-active" : ""}>

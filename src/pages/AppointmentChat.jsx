@@ -5,6 +5,6 @@ import { useParams } from "react-router-dom";
 function AppointmentChat() {
   const params = useParams();
 
-  return <Chat chatId={params.chatId} />;
+  return <Chat chatId={params.appointmentId} />;
 }
 export default AppointmentChat;

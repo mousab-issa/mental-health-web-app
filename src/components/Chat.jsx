@@ -1,29 +1,44 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useSelector } from "react-redux";
 import { socket } from "../utils/socket";
-import fetchData, { deleteData } from "../helper/apiCall";
-import jwtDecode from "jwt-decode";
+import axios from "axios";
+import fetchData from "../helper/apiCall";
+
+const PAGE_SIZE = 200;
 
 const Chat = ({ chatId }) => {
   const [messages, setMessages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [messageInput, setMessageInput] = useState("");
   const messageInputRef = useRef(null);
+  const user = useSelector((state) => state.auth.user);
 
-  const [user] = useState(
-    localStorage.getItem("token")
-      ? jwtDecode(localStorage.getItem("token"))
-      : ""
-  );
+  const loadMore = useCallback(async () => {
+    if (!hasMore) return;
+
+    try {
+      const response = await fetchData(
+        `/chat/${chatId}?page=${page}&limit=${PAGE_SIZE}`
+      );
+      const newMessages = response.messages.docs;
+
+      if (newMessages.length < PAGE_SIZE) {
+        setHasMore(false);
+      }
+
+      setMessages((prevMessages) => [...prevMessages, ...newMessages]);
+      setPage((prevPage) => prevPage + 1);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [chatId, page, hasMore]);
 
   useEffect(() => {
-    fetchData(`/messages/${chatId}`)
-      .then((response) => {
-        console.log(response);
-        setMessages(response.messages);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    loadMore();
+  }, [loadMore]);
 
+  useEffect(() => {
     function onConnect() {
       console.log("Connected");
     }
@@ -34,12 +49,11 @@ const Chat = ({ chatId }) => {
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-
     socket.emit("joinChat", chatId);
 
     socket.on("message", (message) => {
-      if (message.sender_id !== user.userId) {
-        setMessages((messages) => [...messages, message]);
+      if (message.sender_id !== user._id) {
+        setMessages((prevMessages) => [...prevMessages, message]);
       }
     });
 
@@ -48,7 +62,7 @@ const Chat = ({ chatId }) => {
       socket.off("disconnect", onDisconnect);
       socket.off("message");
     };
-  }, []);
+  }, [chatId, user._id]);
 
   const sendMessage = async (event) => {
     event.preventDefault();
@@ -58,27 +72,28 @@ const Chat = ({ chatId }) => {
 
     const data = {
       message: messageInput,
-      sender_id: user.userId,
+      sender_id: user._id,
       chat_id: chatId,
       createdAt: new Date(),
     };
 
     setMessageInput("");
-    setMessages((messages) => [...messages, data]);
+    setMessages((prevMessages) => [...prevMessages, data]);
 
     try {
       socket.emit("sendMessage", data);
     } catch (error) {
-      console.error(error);
-      setMessages((messages) => messages.filter((message) => message !== data));
+      setMessages((prevMessages) =>
+        prevMessages.filter((message) => message !== data)
+      );
     }
   };
 
   const deleteMessage = async (messageId) => {
     try {
-      await deleteData(`/message/${messageId}`);
-      setMessages((messages) =>
-        messages.filter((message) => message._id !== messageId)
+      await axios.delete(`/chat/message/${messageId}`);
+      setMessages((prevMessages) =>
+        prevMessages.filter((message) => message._id !== messageId)
       );
     } catch (error) {
       console.error(error);
@@ -98,7 +113,7 @@ const Chat = ({ chatId }) => {
             <div key={index} className="flex flex-col my-2">
               <div
                 className={`flex flex-col justify-between rounded-xl px-4 py-2 mb-1 shadow-md ${
-                  message.sender_id === user.userId
+                  message.sender_id === user._id
                     ? "bg-blue-500 text-white self-end"
                     : "bg-gray-300 self-start"
                 }`}

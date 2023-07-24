@@ -27,7 +27,7 @@ const Appointments = () => {
   const { userId } = jwt_decode(localStorage.getItem("token"));
 
   const navigateToChat = (appointment) => {
-    navigate(`/appointment/chat/${appointment._id}`);
+    navigate(`/appointment/${appointment._id}/chat`);
   };
 
   const complete = (ele) => {

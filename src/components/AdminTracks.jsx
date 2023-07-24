@@ -9,6 +9,7 @@ import {
 } from "../redux/reducers/tracks.slice";
 import Modal from "react-modal";
 import CloudinaryUpload from "../utils/cloudinaryUpload";
+import Button from "../components/Button";
 
 Modal.setAppElement("#root");
 
@@ -20,7 +21,7 @@ const AdminTracks = () => {
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const { data: tracks } = useSelector((state) => state.track);
+  const { data: tracks, loading } = useSelector((state) => state.track);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -49,9 +50,9 @@ const AdminTracks = () => {
       }
 
       if (data._id) {
-        dispatch(updateTrack({ id: data._id, track: data }));
+        await dispatch(updateTrack({ id: data._id, track: data })).unwrap();
       } else {
-        dispatch(createTrack(data));
+        await dispatch(createTrack(data)).unwrap();
       }
     } catch (error) {
     } finally {
@@ -59,8 +60,8 @@ const AdminTracks = () => {
     }
   };
 
-  const deleteHandler = (id) => {
-    dispatch(deleteTrack(id));
+  const deleteHandler = async (id) => {
+    await dispatch(deleteTrack(id)).unwrap(); // awaiting the promise
   };
 
   const prevPage = () => {
@@ -181,12 +182,9 @@ const AdminTracks = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            className="py-2 px-4 bg-green-500 text-white rounded shadow"
-          >
+          <Button type="submit" loading={loading} disabled={loading}>
             Create
-          </button>
+          </Button>
         </form>
       </Modal>
 
