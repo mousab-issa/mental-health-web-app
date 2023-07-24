@@ -27,6 +27,7 @@ const AppointmentChat = lazy(() => import("./pages/AppointmentChat"));
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const status = useSelector((state) => state.auth.status);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -40,7 +41,7 @@ function App() {
     dispatch(fetchEvents());
   }, [dispatch]);
 
-  return !user ? (
+  return !user && status === "loading" ? (
     <div className="h-screen">
       <Loading />
     </div>
