@@ -9,7 +9,7 @@ import Loading from "./components/Loading";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Track from "./pages/Track";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserInfo, logout } from "./redux/reducers/auth.slice";
 import jwt_decode from "jwt-decode";
 import { fetchEvents } from "./redux/reducers/events.slice";
@@ -26,6 +26,7 @@ const AppointmentChat = lazy(() => import("./pages/AppointmentChat"));
 
 function App() {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,7 +40,9 @@ function App() {
     dispatch(fetchEvents());
   }, [dispatch]);
 
-  return (
+  return !user ? (
+    <span>loading..</span>
+  ) : (
     <Router>
       <Navbar />
       <Toaster />
