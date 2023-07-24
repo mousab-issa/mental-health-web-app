@@ -8,6 +8,7 @@ const PAGE_SIZE = 200;
 
 const Chat = ({ chatId }) => {
   const [messages, setMessages] = useState([]);
+  const [chat, setChat] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [messageInput, setMessageInput] = useState("");
@@ -23,6 +24,8 @@ const Chat = ({ chatId }) => {
       const response = await fetchData(
         `/chat/${chatId}?page=${page}&limit=${PAGE_SIZE}`
       );
+
+      setChat(response.chat);
       const newMessages = response.messages.docs;
 
       if (newMessages.length < PAGE_SIZE) {
@@ -78,6 +81,8 @@ const Chat = ({ chatId }) => {
       socket.off("message");
     };
   }, [chatId, user._id]);
+
+  console.log(chat);
 
   const sendMessage = async (event) => {
     event.preventDefault();
