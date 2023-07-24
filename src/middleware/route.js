@@ -1,29 +1,28 @@
 import { Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+
+import jwtDecode from "jwt-decode";
 
 export const Protected = ({ children }) => {
-  const user = useSelector((state) => state.auth.user);
-
-  if (!user) {
+  const token = localStorage.getItem("token");
+  if (!token) {
     return <Navigate to={"/"} replace={true} />;
   }
   return children;
 };
 
 export const Public = ({ children }) => {
-  const user = useSelector((state) => state.auth.user);
-
-  if (!user) {
+  const token = localStorage.getItem("token");
+  if (!token) {
     return children;
   }
-  return <Navigate to={"/"} replace={true} />;
+  return <Navigate to={"/"} replace={true}></Navigate>;
 };
 
 export const Admin = ({ children }) => {
-  const user = useSelector((state) => state.auth.user);
+  const user = jwtDecode(localStorage.getItem("token"));
 
-  if (user && user.isAdmin) {
+  if (user.isAdmin) {
     return children;
   }
-  return <Navigate to={"/"} replace={true} />;
+  return <Navigate to={"/"} replace={true}></Navigate>;
 };

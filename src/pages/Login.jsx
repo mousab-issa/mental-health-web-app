@@ -18,7 +18,9 @@ function Login() {
     try {
       await dispatch(loginUser(data)).unwrap();
       toast.success("User Logged successfully");
-      navigate("/");
+
+      console.log("Hello");
+      navigate("/appointments");
     } catch (error) {
       console.error(error);
     }

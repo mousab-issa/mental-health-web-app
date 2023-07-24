@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { socket } from "../utils/socket";
 import axios from "axios";
+import Loading from "../components/Loading";
 import fetchData from "../helper/apiCall";
 
 const PAGE_SIZE = 200;
@@ -57,6 +58,10 @@ const Chat = ({ chatId }) => {
   }, [loadMore]);
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
+
     function onConnect() {
       console.log("Connected");
     }
@@ -80,7 +85,7 @@ const Chat = ({ chatId }) => {
       socket.off("disconnect", onDisconnect);
       socket.off("message");
     };
-  }, [chatId, user._id]);
+  }, [chatId, user]);
 
   const sendMessage = async (event) => {
     event.preventDefault();
@@ -123,7 +128,9 @@ const Chat = ({ chatId }) => {
     return `${date.toLocaleTimeString()}`;
   };
 
-  return (
+  return !user ? (
+    <Loading />
+  ) : (
     <div className="h-fill bg-gray-100">
       <div className="p-6">
         <div className="overflow-y-auto h-[75vh] mb-6 space-y-4">
