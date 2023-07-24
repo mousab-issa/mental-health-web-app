@@ -4,8 +4,8 @@ import fetchData, { deleteData, postData, putData } from "../../helper/apiCall";
 export const fetchTracks = createAsyncThunk(
   "tracks/fetchTracks",
   async (page = 1) => {
-    const data = await fetchData(`/tracks?page=${page}&limit=10`);
-    return data;
+    const response = await fetchData(`/tracks?page=${page}&limit=10`);
+    return response.data;
   }
 );
 
@@ -13,31 +13,31 @@ export const fetchTrackById = createAsyncThunk(
   "track/fetchById",
   async (trackId) => {
     const response = await fetchData(`/tracks/${trackId}`);
-    return response;
+    return response.data;
   }
 );
 
 export const createTrack = createAsyncThunk(
   "tracks/createTrack",
   async (track) => {
-    const data = await postData("/tracks", track);
-    return data;
+    const response = await postData("/tracks", track);
+    return response.data;
   }
 );
 
 export const deleteTrack = createAsyncThunk(
   "tracks/deleteTrack",
   async (id) => {
-    const data = await deleteData(`/tracks/${id}`);
-    return data;
+    const response = await deleteData(`/tracks/${id}`);
+    return response.data;
   }
 );
 
 export const updateTrack = createAsyncThunk(
   "tracks/updateTrack",
   async ({ id, track }) => {
-    const data = await putData(`/tracks/${id}`, track);
-    return data;
+    const response = await putData(`/tracks/${id}`, track);
+    return response.data;
   }
 );
 
@@ -71,7 +71,6 @@ const tracksSlice = createSlice({
         state.data.push(action.payload);
         state.loading = false;
       })
-
       .addCase(createTrack.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
@@ -96,7 +95,7 @@ const tracksSlice = createSlice({
       })
       .addCase(updateTrack.fulfilled, (state, action) => {
         const index = state.data.findIndex(
-          (track) => track.id === action.payload.id
+          (track) => track._id === action.payload._id
         );
         if (index !== -1) {
           state.data[index] = action.payload;
@@ -112,7 +111,6 @@ const tracksSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchTrackById.fulfilled, (state, action) => {
-        // Check if track already exists in the state
         const index = state.data.findIndex(
           (track) => track._id === action.payload._id
         );

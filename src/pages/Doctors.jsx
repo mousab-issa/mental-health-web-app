@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import DoctorCard from "../components/DoctorCard";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
 import "../styles/doctors.css";
 import fetchData from "../helper/apiCall";
 import Loading from "../components/Loading";
