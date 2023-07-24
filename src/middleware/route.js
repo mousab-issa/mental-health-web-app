@@ -16,7 +16,7 @@ export const Public = ({ children }) => {
   if (!user) {
     return children;
   }
-  return <Navigate to={"/"} replace={true}></Navigate>;
+  return <Navigate to={"/"} replace={true} />;
 };
 
 export const Admin = ({ children }) => {
@@ -25,5 +25,5 @@ export const Admin = ({ children }) => {
   if (user && user.isAdmin) {
     return children;
   }
-  return <Navigate to={"/"} replace={true}></Navigate>;
+  return <Navigate to={"/"} replace={true} />;
 };
