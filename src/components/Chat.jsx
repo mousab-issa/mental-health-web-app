@@ -82,8 +82,6 @@ const Chat = ({ chatId }) => {
     };
   }, [chatId, user._id]);
 
-  console.log(chat);
-
   const sendMessage = async (event) => {
     event.preventDefault();
     if (!messageInput) {
