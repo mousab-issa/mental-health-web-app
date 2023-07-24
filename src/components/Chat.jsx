@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { socket } from "../utils/socket";
-import fetchData, { deleteData, postData } from "../helper/apiCall";
+import fetchData, { deleteData } from "../helper/apiCall";
 import jwtDecode from "jwt-decode";
 
 const Chat = ({ chatId }) => {
@@ -60,17 +60,17 @@ const Chat = ({ chatId }) => {
       message: messageInput,
       sender_id: user.userId,
       chat_id: chatId,
-      createdAt: new Date(), // Add this line to fix the Invalid Date issue
+      createdAt: new Date(),
     };
 
     setMessageInput("");
-    setMessages((messages) => [...messages, data]); // Optimistic update
+    setMessages((messages) => [...messages, data]);
 
     try {
       socket.emit("sendMessage", data);
     } catch (error) {
       console.error(error);
-      setMessages((messages) => messages.filter((message) => message !== data)); // If an error occurred, rollback the optimistic update
+      setMessages((messages) => messages.filter((message) => message !== data));
     }
   };
 
