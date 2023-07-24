@@ -1,6 +1,0 @@
-services:
-  - type: web
-    name: my-app
-    env: node
-    buildCommand: npm install && npm run build
-    startCommand: node server.js
