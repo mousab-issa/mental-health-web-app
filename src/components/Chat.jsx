@@ -63,7 +63,7 @@ const Chat = ({ chatId }) => {
     }
 
     function onConnect() {
-      console.log("Connected");
+      console.log("Connected to socket Server");
     }
 
     function onDisconnect() {
@@ -104,6 +104,7 @@ const Chat = ({ chatId }) => {
     setMessages((prevMessages) => [...prevMessages, data]);
 
     try {
+      console.log(data);
       socket.emit("sendMessage", data);
     } catch (error) {
       setMessages((prevMessages) =>

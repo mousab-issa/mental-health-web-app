@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
 
-const URL = "https://mental-health-backend-26w3.onrender.com";
+const URL = process.env.SOCKET_SERVER;
 
 export const socket = io(URL);
