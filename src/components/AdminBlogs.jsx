@@ -44,13 +44,13 @@ const AdminBlog = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      //   if (selectedImage) {
-      //     data.thumbnail = await CloudinaryUpload(selectedImage, "image");
-      //   }
+      if (selectedImage) {
+        data.thumbnail = await CloudinaryUpload(selectedImage, "image");
+      }
 
-      //   if (selectThumbNail) {
-      //     data.image = await CloudinaryUpload(selectThumbNail, "image");
-      //   }
+      if (selectThumbNail) {
+        data.image = await CloudinaryUpload(selectThumbNail, "image");
+      }
 
       if (data._id) {
         await dispatch(updateBlog({ id: data._id, blogPost: data })).unwrap();
