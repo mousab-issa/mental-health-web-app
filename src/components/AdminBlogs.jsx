@@ -2,37 +2,38 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
-  createTrack,
-  deleteTrack,
-  updateTrack,
-  fetchTracks,
-} from "../redux/reducers/tracks.slice";
+  createBlog,
+  deleteBlog,
+  updateBlog,
+  fetchBlogs,
+} from "../redux/reducers/blog.slice";
 import Modal from "react-modal";
 import CloudinaryUpload from "../utils/cloudinaryUpload";
 import Button from "../components/Button";
 
 Modal.setAppElement("#root");
 
-const AdminTracks = () => {
+const AdminBlog = () => {
   const { register, handleSubmit, reset, watch } = useForm();
 
   const [modalIsOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedTrack, setSelectedTrack] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectThumbNail, setSelectThumbNail] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const { data: tracks } = useSelector((state) => state.track);
+  const { data } = useSelector((state) => state.blog);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchTracks(currentPage));
+    dispatch(fetchBlogs(currentPage));
   }, [dispatch, currentPage]);
 
-  const openModal = (track) => {
+  const openModal = (blogPost) => {
     setIsOpen(true);
 
-    reset(track);
+    reset(blogPost);
   };
 
   const closeModal = () => {
@@ -43,18 +44,18 @@ const AdminTracks = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      if (selectedTrack) {
-        data.link = await CloudinaryUpload(selectedTrack, "video");
-      }
+      //   if (selectedImage) {
+      //     data.thumbnail = await CloudinaryUpload(selectedImage, "image");
+      //   }
 
-      if (selectedImage) {
-        data.image = await CloudinaryUpload(selectedImage, "image");
-      }
+      //   if (selectThumbNail) {
+      //     data.image = await CloudinaryUpload(selectThumbNail, "image");
+      //   }
 
       if (data._id) {
-        await dispatch(updateTrack({ id: data._id, track: data })).unwrap();
+        await dispatch(updateBlog({ id: data._id, blogPost: data })).unwrap();
       } else {
-        await dispatch(createTrack(data)).unwrap();
+        await dispatch(createBlog(data)).unwrap();
       }
       setLoading(false);
     } catch (error) {
@@ -64,7 +65,7 @@ const AdminTracks = () => {
   };
 
   const deleteHandler = async (id) => {
-    await dispatch(deleteTrack(id)).unwrap();
+    await dispatch(deleteBlog(id)).unwrap();
   };
 
   const prevPage = () => {
@@ -85,22 +86,20 @@ const AdminTracks = () => {
     },
   };
 
-  const trackTypes = ["breathing", "meditation"];
-
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Tracks</h1>
+      <h1 className="text-2xl font-bold mb-4">Blog Posts</h1>
       <button className="btn btn-primary mb-10" onClick={() => openModal(null)}>
-        Create Track
+        Create Blog Post
       </button>
 
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        contentLabel="Track Modal"
+        contentLabel="Blog Post Modal"
         style={customStyles}
       >
-        <h2 className="text-2xl font-bold my-4">Create New Track</h2>
+        <h2 className="text-2xl font-bold my-4">Create New Blog Post</h2>
         <form className="space-y-4">
           <div>
             <input
@@ -113,29 +112,15 @@ const AdminTracks = () => {
           <div>
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="image"
+              htmlFor="thumbnail"
             >
-              Image
+              Thumbnail
             </label>
-            {selectedImage && (
-              <img
-                src={URL.createObjectURL(selectedImage)}
-                alt="preview"
-                style={{ width: "100px", height: "100px" }}
-              />
-            )}
-            {!selectedImage && watch("image") && (
-              <img
-                src={watch("image")}
-                alt="preview"
-                style={{ width: "100px", height: "100px" }}
-              />
-            )}
             <input
               className="w-full p-2 mb-3 border border-gray-200 rounded"
               type="file"
-              name="image"
-              placeholder="image"
+              name="thumbnail"
+              placeholder="Thumbnail"
               onChange={(e) => setSelectedImage(e.target.files[0])}
             />
           </div>
@@ -143,44 +128,23 @@ const AdminTracks = () => {
           <div>
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="link"
+              htmlFor="image"
             >
-              Link
+              Image
             </label>
             <input
               className="w-full p-2 mb-3 border border-gray-200 rounded"
               type="file"
-              name="link"
-              placeholder="link"
-              onChange={(e) => setSelectedTrack(e.target.files[0])}
+              name="image"
+              placeholder="Image"
+              onChange={(e) => setSelectThumbNail(e.target.files[0])}
             />
           </div>
 
           <div>
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="type"
-            >
-              Type of Track
-            </label>
-            <select
-              {...register("type", { required: true })}
-              id="type"
-              className="w-full p-2 border border-gray-200 rounded"
-            >
-              <option value="">Select a type</option>
-              {trackTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
             <textarea
-              {...register("description", { required: true })}
-              placeholder="Description"
+              {...register("content", { required: true })}
+              placeholder="Content"
               className="w-full p-2 border border-gray-200 rounded"
             />
           </div>
@@ -199,42 +163,42 @@ const AdminTracks = () => {
         <thead>
           <tr>
             <th>Title</th>
-            <th>Description</th>
+            <th>Content</th>
+            <th>Thumbnail</th>
             <th>Image</th>
-            <th>Link</th>
-            <th>Type</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {tracks?.map((track) => (
-            <tr key={track._id}>
-              <td>{track.title}</td>
+          {data?.map((post) => (
+            <tr key={post._id}>
+              <td>{post.title}</td>
               <td className="px-4 py-2 overflow-hidden overflow-ellipsis whitespace-normal break-words max-h-12 line-clamp-2">
-                {track.description}
+                {post.content}
               </td>
               <td>
                 <img
-                  src={track.image}
-                  alt={track.title}
+                  src={post.thumbnail}
+                  alt={post.title}
                   style={{ width: "50px", height: "50px" }}
                 />
               </td>
               <td>
-                <a href={track.link} target="_blank" rel="noreferrer">
-                  View file
-                </a>
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  style={{ width: "50px", height: "50px" }}
+                />
               </td>
-              <td>{track.type}</td>
               <td>
                 <button
-                  onClick={() => openModal(track)}
+                  onClick={() => openModal(post)}
                   className="py-1 px-4 bg-blue-500 text-white rounded mr-2"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => deleteHandler(track._id)}
+                  onClick={() => deleteHandler(post._id)}
                   className="py-1 px-4 bg-red-500 text-white rounded"
                 >
                   Delete
@@ -264,4 +228,4 @@ const AdminTracks = () => {
   );
 };
 
-export default AdminTracks;
+export default AdminBlog;

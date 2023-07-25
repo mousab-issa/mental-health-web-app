@@ -60,6 +60,11 @@ const Sidebar = () => {
       path: "/dashboard/tracks",
       icon: <FaMusic />,
     },
+    {
+      name: "Blogs",
+      path: "/dashboard/blogs",
+      icon: <FaMusic />,
+    },
   ];
 
   const logoutFunc = () => {

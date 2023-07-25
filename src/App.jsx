@@ -106,6 +106,15 @@ function App() {
           />
 
           <Route
+            path="/dashboard/blogs"
+            element={
+              <Admin>
+                <Dashboard type={"blogs"} />
+              </Admin>
+            }
+          />
+
+          <Route
             path="/tracks/:trackId"
             element={
               <Protected>

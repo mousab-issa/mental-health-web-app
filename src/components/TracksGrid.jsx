@@ -29,16 +29,13 @@ const TracksGrid = () => {
                 key={track._id}
                 className="card overflow-hidden shadow-lg rounded-lg h-90 w-60 md:w-80"
               >
-                <Link
-                  to={`/tracks/${track._id}`}
-                  className="w-full block h-full"
-                >
+                <Link to={`/tracks/${track._id}`} className="w-full">
                   <img
                     alt={track.title}
                     src={track.image}
                     className="max-h-40 w-full object-cover"
                   />
-                  <div className="bg-white w-full p-4">
+                  <div className="w-full p-4">
                     <p className="text-gray-800 text-xl font-medium mb-2">
                       {track.title}
                     </p>
