@@ -24,6 +24,8 @@ const AdminTracks = () => {
   const { data: tracks, loading } = useSelector((state) => state.track);
   const dispatch = useDispatch();
 
+  console.log(loading);
+
   useEffect(() => {
     dispatch(fetchTracks(currentPage));
   }, [dispatch, currentPage]);
@@ -61,7 +63,7 @@ const AdminTracks = () => {
   };
 
   const deleteHandler = async (id) => {
-    await dispatch(deleteTrack(id)).unwrap(); // awaiting the promise
+    await dispatch(deleteTrack(id)).unwrap();
   };
 
   const prevPage = () => {
@@ -98,7 +100,7 @@ const AdminTracks = () => {
         style={customStyles}
       >
         <h2 className="text-2xl font-bold my-4">Create New Track</h2>
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-4">
           <div>
             <input
               {...register("title", { required: true })}
@@ -182,13 +184,17 @@ const AdminTracks = () => {
             />
           </div>
 
-          <Button type="submit" loading={loading} disabled={loading}>
+          <Button
+            loading={loading}
+            disabled={loading}
+            onClick={handleSubmit(onSubmit)}
+          >
             Create
           </Button>
         </form>
       </Modal>
 
-      <table className="w-full table-auto">
+      <table className="min-w-full table-auto">
         <thead>
           <tr>
             <th>Title</th>
@@ -203,7 +209,9 @@ const AdminTracks = () => {
           {tracks?.map((track) => (
             <tr key={track._id}>
               <td>{track.title}</td>
-              <td>{track.description}</td>
+              <td className="px-4 py-2 overflow-hidden overflow-ellipsis whitespace-normal break-words max-h-12 line-clamp-2">
+                {track.description}
+              </td>
               <td>
                 <img
                   src={track.image}

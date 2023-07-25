@@ -12,7 +12,7 @@ const Home = () => {
   const events = useSelector((state) => state.event.data);
 
   const carouselImageStyle = {
-    maxHeight: "50vh",
+    maxHeight: "70vh",
     objectFit: "cover",
   };
 
@@ -45,14 +45,13 @@ const Home = () => {
             <img
               src={event.image}
               alt={event.title}
+              className="w-full h-auto object-contain"
               style={carouselImageStyle}
             />
-            <p style={carouselLegendStyle}>{event.title}</p>
           </div>
         ))}
       </Carousel>
       <TracksGrid />
-      <Contact />
     </Fragment>
   );
 };

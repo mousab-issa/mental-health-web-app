@@ -139,7 +139,7 @@ const AdminEvents = () => {
       {error && <p className="text-red-500">Error: {error}</p>}
       {events?.length > 0 ? (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white table-auto">
+          <table className="min-w-full max-w-screen bg-white table-auto">
             <thead>
               <tr className="text-gray-700">
                 <th className="px-4 py-2">Image</th>
@@ -162,7 +162,10 @@ const AdminEvents = () => {
                     />
                   </td>
                   <td className="px-4 py-2">{event.title}</td>
-                  <td className="px-4 py-2">{event.details}</td>
+                  <td className="px-4 py-2 overflow-hidden overflow-ellipsis whitespace-normal break-words">
+                    {event.details}
+                  </td>
+
                   <td className="px-4 py-2">
                     <button
                       className="py-2 px-4 bg-blue-600 text-white rounded mr-2 hover:bg-blue-500"

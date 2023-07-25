@@ -10,7 +10,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Track from "./pages/Track";
 import { useDispatch } from "react-redux";
-import { getUserInfo, logout } from "./redux/reducers/auth.slice";
+import { getUserInfo } from "./redux/reducers/auth.slice";
 import jwt_decode from "jwt-decode";
 import { fetchEvents } from "./redux/reducers/events.slice";
 
