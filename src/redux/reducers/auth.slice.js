@@ -52,7 +52,6 @@ export const getUserInfo = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       const response = await fetchData(`/user/getuser/${userId}`);
-      console.log("Hello");
       return response.data;
     } catch (error) {
       await localStorage.removeItem("token");

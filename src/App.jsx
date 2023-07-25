@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { getUserInfo } from "./redux/reducers/auth.slice";
 import jwt_decode from "jwt-decode";
 import { fetchEvents } from "./redux/reducers/events.slice";
+import BlogPage from "./pages/Blog";
 
 const Home = lazy(() => import("./pages/Home"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -101,6 +102,24 @@ function App() {
             element={
               <Admin>
                 <Dashboard type={"users"} />
+              </Admin>
+            }
+          />
+
+          <Route
+            path="/blogs/:blogId"
+            element={
+              <Protected>
+                <BlogPage />
+              </Protected>
+            }
+          />
+
+          <Route
+            path="/dashboard/blogs"
+            element={
+              <Admin>
+                <Dashboard type={"blogs"} />
               </Admin>
             }
           />

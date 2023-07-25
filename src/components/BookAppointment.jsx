@@ -67,6 +67,7 @@ const BookAppointment = ({ setModalOpen, ele }) => {
                 className="form-input"
                 value={formDetails.date}
                 onChange={inputChange}
+                classNam="text-gray-950	"
               />
               <input
                 type="time"
@@ -74,6 +75,7 @@ const BookAppointment = ({ setModalOpen, ele }) => {
                 className="form-input"
                 value={formDetails.time}
                 onChange={inputChange}
+                classNam="text-gray-950	"
               />
               <button
                 type="submit"

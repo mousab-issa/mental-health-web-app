@@ -7,6 +7,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchEvents } from "../redux/reducers/events.slice";
 import TracksGrid from "../components/TracksGrid";
+import BlogGrid from "../components/BlogsGrid";
 
 const Home = () => {
   const events = useSelector((state) => state.event.data);
@@ -52,6 +53,7 @@ const Home = () => {
         ))}
       </Carousel>
       <TracksGrid />
+      <BlogGrid />
     </Fragment>
   );
 };

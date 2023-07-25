@@ -16,6 +16,7 @@ const Chat = ({ chatId }) => {
   const messageInputRef = useRef(null);
   const user = useSelector((state) => state.auth.user);
 
+  console.log(user);
   const observer = useRef();
 
   const loadMore = useCallback(async () => {
@@ -89,7 +90,7 @@ const Chat = ({ chatId }) => {
 
   const sendMessage = async (event) => {
     event.preventDefault();
-    if (!messageInput) {
+    if (!messageInput || !user) {
       return;
     }
 
