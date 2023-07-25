@@ -28,7 +28,7 @@ const Chat = ({ chatId }) => {
       );
 
       setChat(response.chat);
-      const newMessages = response.messages.docs;
+      const newMessages = response.messages.docs.reverse();
 
       if (newMessages.length < PAGE_SIZE) {
         setHasMore(false);
@@ -125,6 +125,20 @@ const Chat = ({ chatId }) => {
     }
   };
 
+  const getFormattedDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  };
+
+  const getFormattedTime = (timestamp) => {
+    const date = new Date(timestamp);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    hours = hours < 10 ? "0" + hours : hours;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    return `${hours}:${minutes}`;
+  };
+
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     return `${date.toLocaleTimeString()}`;
@@ -136,24 +150,40 @@ const Chat = ({ chatId }) => {
     <div className="h-fill bg-gray-100">
       <div className="p-6">
         <div className="overflow-y-auto h-[75vh] mb-6 space-y-4">
-          {messages?.map((message, index) => (
-            <div
-              key={index}
-              ref={index === messages.length - 1 ? lastMessageElementRef : null}
-              className="flex flex-col my-2"
-            >
-              <div
-                className={`flex flex-col justify-between rounded-xl px-4 py-2 mb-1 shadow-md ${
-                  message.sender_id === user._id
-                    ? "bg-blue-500 text-white self-end"
-                    : "bg-gray-300 self-start"
-                }`}
-              >
-                <span>{message.message}</span>
-                <span className="text-xs text-gray-500 self-start">
-                  {formatDate(message.createdAt)}
-                </span>
-              </div>
+          {Object.entries(
+            messages.reduce((result, message) => {
+              const date = getFormattedDate(message.createdAt);
+              if (!result[date]) {
+                result[date] = [];
+              }
+              result[date].push(message);
+              return result;
+            }, {})
+          ).map(([date, messages], index) => (
+            <div key={date}>
+              <div className="text-center text-gray-500">{date}</div>
+              {messages.map((message, i) => (
+                <div
+                  key={i}
+                  ref={
+                    index === messages.length - 1 ? lastMessageElementRef : null
+                  }
+                  className="flex flex-col my-2"
+                >
+                  <div
+                    className={`flex flex-col justify-between rounded-xl px-4 py-2 mb-1 shadow-md ${
+                      message.sender_id === user._id
+                        ? "bg-blue-500 text-white self-end"
+                        : "bg-gray-300 self-start"
+                    }`}
+                  >
+                    <span>{message.message}</span>
+                    <span className="text-xs text-gray-500 self-start">
+                      {getFormattedTime(message.createdAt)}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           ))}
         </div>
