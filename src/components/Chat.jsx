@@ -106,7 +106,6 @@ const Chat = ({ chatId }) => {
 
     try {
       socket.emit("sendMessage", data);
-      console.log(data);
     } catch (error) {
       setMessages((prevMessages) =>
         prevMessages.filter((message) => message !== data)
