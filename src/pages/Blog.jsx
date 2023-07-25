@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchBlogById } from "../redux/reducers/blog.slice";
 import { useParams } from "react-router-dom";
+import MarkDown from "../components/MarkDown";
 
 const BlogPage = () => {
   const { blogId } = useParams();
@@ -24,11 +25,8 @@ const BlogPage = () => {
             alt={blog.title}
             className="w-full h-64 object-cover mb-8 rounded-lg shadow-md"
           />
-          <h1 className="text-4xl font-bold mb-4">{blog.title}</h1>
-          <div
-            className="prose prose-lg text-gray-500 mx-auto"
-            dangerouslySetInnerHTML={{ __html: blog.content }}
-          />
+          <h1 className="text-4xl font-bold">{blog.title}</h1>
+          <MarkDown>{blog.content}</MarkDown>
         </>
       )}
     </div>

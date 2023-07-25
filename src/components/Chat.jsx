@@ -16,7 +16,6 @@ const Chat = ({ chatId }) => {
   const messageInputRef = useRef(null);
   const user = useSelector((state) => state.auth.user);
 
-  console.log(user);
   const observer = useRef();
 
   const loadMore = useCallback(async () => {
