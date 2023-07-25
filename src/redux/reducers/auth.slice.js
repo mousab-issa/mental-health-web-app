@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import toast from "react-hot-toast";
 import jwt_decode from "jwt-decode";
 import fetchData, { postData } from "../../helper/apiCall";
 
@@ -14,7 +13,6 @@ export const loginUser = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      toast.error("Error While logging in");
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
@@ -41,7 +39,6 @@ export const logout = createAsyncThunk(
   async (user, thunkAPI) => {
     try {
       await localStorage.removeItem("token");
-      toast.success("Logged out successfully");
 
       return {};
     } catch (error) {
@@ -121,20 +118,16 @@ export const authSlice = createSlice({
       state.user = null;
       state.status = "idle";
       state.error = null;
-
-      toast.error(payload.error);
     },
     [registerUser.pending]: (state) => {
       state.status = "loading";
     },
     [registerUser.fulfilled]: (state, { payload }) => {
       state.status = "succeeded";
-      toast.success("User registered successfully");
     },
     [registerUser.rejected]: (state, { payload }) => {
       state.status = "idle";
       state.error = payload.error;
-      toast.error(payload.error);
     },
     [logout.fulfilled]: (state, { payload }) => {
       state.user = null;

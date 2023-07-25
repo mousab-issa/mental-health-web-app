@@ -18,7 +18,7 @@ const Users = () => {
     try {
       dispatch(setLoading(true));
       const temp = await fetchData(`/user/getallusers`);
-      setUsers(temp);
+      setUsers(temp.data);
       dispatch(setLoading(false));
     } catch (error) {}
   };
