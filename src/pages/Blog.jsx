@@ -23,10 +23,10 @@ const BlogPage = () => {
           <img
             src={blog.image}
             alt={blog.title}
-            className="w-full h-64 object-cover mb-8 rounded-lg shadow-md"
+            className="w-full h-auto object-cover mb-8 rounded-lg shadow-md"
           />
           <h1 className="text-4xl font-bold">{blog.title}</h1>
-          <MarkDown>{blog.content}</MarkDown>
+          <div dangerouslySetInnerHTML={{ __html: blog.content }} />
         </>
       )}
     </div>
