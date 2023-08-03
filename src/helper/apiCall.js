@@ -29,6 +29,7 @@ export const postData = async (url, body) => {
 };
 
 export const putData = async (url, body) => {
+  console.log(url, body);
   const { data } = await apiClient.put(url, body);
   return data;
 };

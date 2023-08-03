@@ -53,7 +53,7 @@ const AdminBlog = () => {
       }
 
       if (data._id) {
-        await dispatch(updateBlog({ id: data._id, blogPost: data })).unwrap();
+        await dispatch(updateBlog({ id: data._id, blog: data })).unwrap();
       } else {
         await dispatch(createBlog(data)).unwrap();
       }
@@ -87,7 +87,7 @@ const AdminBlog = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 overflow-scroll">
       <h1 className="text-2xl font-bold mb-4">Blog Posts</h1>
       <button className="btn btn-primary mb-10" onClick={() => openModal(null)}>
         Create Blog Post
